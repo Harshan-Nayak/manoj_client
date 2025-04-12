@@ -28,7 +28,9 @@ const Home = () => {
       }
       
       const res = await axios.get(url);
-      setInternships(res.data);
+      console.log("Fetched data:", res.data); 
+      setInternships(Array.isArray(res.data) ? res.data : []);
+
       setError(null);
     } catch (err) {
       setError('Failed to fetch internships');
@@ -47,8 +49,10 @@ const Home = () => {
     setSearch('');
     setLocation('');
     setSort('newest');
-    fetchInternships();
+    // Delay to wait for state update
+    setTimeout(fetchInternships, 0);
   };
+  
 
   return (
     <div className="home-page">
@@ -101,9 +105,16 @@ const Home = () => {
             <p>No internships found. Try adjusting your search.</p>
           ) : (
             <div className="internships-grid">
-              {internships.map((internship) => (
-                <InternshipCard key={internship._id} internship={internship} />
-              ))}
+             {Array.isArray(internships) && internships.length > 0 ? (
+  <div className="internships-grid">
+    {internships.map((internship) => (
+      <InternshipCard key={internship._id} internship={internship} />
+    ))}
+  </div>
+) : (
+  <p>No internships found. Try adjusting your search.</p>
+)}
+
             </div>
           )}
         </div>
